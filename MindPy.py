@@ -2,8 +2,10 @@ import curses
 from core.record import RecordOnScreen
 from core.root import Root
 import logging
-import box
 import core.visitor
+import sys
+import argparse
+from core.path import Path
 
 def main(stdscr):
     # Clear screen
@@ -14,7 +16,6 @@ def main(stdscr):
     v = core.visitor.Visitor(win)
     stdscr.clear()
     stdscr.refresh()
-    box.Box.init_window(win)
     while True:
         ch = stdscr.getch()
         if ch == ord(':'):
@@ -93,7 +94,7 @@ def main(stdscr):
                 data = st[2:]
                 b.clear()
                 b.refresh()
-                hl.edit(data)
+                hl.edit(v, data)
                 root.accept(v)
 
         elif ch == curses.KEY_RIGHT:
@@ -118,4 +119,9 @@ def main(stdscr):
 
 if __name__=='__main__':
     logging.basicConfig(filename='mindpy.log')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--draw')
+    args = parser.parse_args()
+    if args.draw == 'diagonal':
+        Path._diagonal = True
     curses.wrapper(main)
