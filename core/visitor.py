@@ -1,5 +1,4 @@
 from core.record import RecordOnScreen
-from box import Box, RootBox
 import core.root
 import logging
 import curses
@@ -44,6 +43,18 @@ class Visitor:
         # iterate trough copy of the list as we are removing items while iterating
         for child in rec.children[:]:
             child.delete(self)
+
+    def edit(self, rec: RecordOnScreen, data: str):            
+        if rec.children:
+            for child in rec.children:
+                for cor in child.path:
+                    self.vwin.delch(*cor)
+                    self.vwin.refresh()
+
+            rec.win.clear() 
+            rec.data = data
+        else:
+            pass
         
     @classmethod
     def highlight(self, rec: RecordOnScreen, key_code: int=None):

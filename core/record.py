@@ -49,9 +49,6 @@ class Record:
         """
         self._children.remove(chld)
 
-    def edit(self, data: str):
-        self._data = data
-
     # Method required by Visitor design pattern.
     def accept(self, visitor):
         visitor.visit(self)
@@ -59,6 +56,9 @@ class Record:
     # Visitor method to delete Records and clear screen
     def delete(self, visitor):
         visitor.delete(self)
+
+    def edit(self, visitor, data: str):
+        visitor.edit(self, data)
 
 class RecordOnScreen(Record):
     """Class representing position of the Record on the screen
