@@ -27,8 +27,8 @@ def main(stdscr):
             st = b.getstr().decode('utf-8')
             if st[0] == 's':
                 ty, tx = win.getmaxyx()
-                y = ty//2
-                x = tx//2 
+                y = ty//2-1
+                x = tx//2-1 - len(st[2:])//2 -1
                 logging.warning('s')
                 root = Root(y, x, win)
                 root.data = st[2:]
@@ -38,6 +38,8 @@ def main(stdscr):
                 curses.noecho()
                 b.clear()
                 b.refresh()
+                win.move(y,x)
+                win.refresh()
                 #win.refresh()   
                 #a.getkey()
                 # Let the user edit until Ctrl-G is struck.
@@ -48,18 +50,52 @@ def main(stdscr):
 
                 #print(message)
             elif st[0] == 'a':
+                b.clear()
+                b.refresh()
                 logging.warning('a')
-                c = RecordOnScreen()
+                y, x = win.getyx()
+                logging.warning('{0}, {1}'.format(y,x))
+                win.move(y, x)
+                win.refresh()
+                cpos = stdscr.getch()
+                while(cpos != ord('h')):
+                    if cpos == curses.KEY_RIGHT:
+                        win.move(y, x+1)
+                        x += 1
+                    elif cpos == curses.KEY_UP:
+                        win.move(y-1, x)
+                        y -= 1
+                    elif cpos == curses.KEY_DOWN:
+                        win.move(y+1, x) 
+                        y += 1
+                    elif cpos == curses.KEY_LEFT:
+                        win.move(y, x-1) 
+                        x -= 1
+                    win.refresh()
+                    curses.noecho()
+                    cpos = stdscr.getch()
+                c = RecordOnScreen(y,x)
                 c.data = st[2:]
                 # add child to highlihted element
                 hl.add_child(c)
                 logging.warning('{0}'.format(hl.children))
                 root.accept(v)
-                curses.noecho()
                 #win.refresh()
                 hl = v.highlight(c, ch)
+                win.move(y, x)
+                win.refresh()
+            elif st[0] == 'd':
                 b.clear()
                 b.refresh()
+                hl.delete(v)
+                hl = v.highlight(root)
+            elif st[0] == 'e':
+                data = st[2:]
+                b.clear()
+                b.refresh()
+                hl.edit(data)
+                root.accept(v)
+
         elif ch == curses.KEY_RIGHT:
             logging.warning('KEY RIGHT')
             root.accept(v)

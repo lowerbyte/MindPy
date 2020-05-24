@@ -49,9 +49,16 @@ class Record:
         """
         self._children.remove(chld)
 
+    def edit(self, data: str):
+        self._data = data
+
     # Method required by Visitor design pattern.
     def accept(self, visitor):
         visitor.visit(self)
+
+    # Visitor method to delete Records and clear screen
+    def delete(self, visitor):
+        visitor.delete(self)
 
 class RecordOnScreen(Record):
     """Class representing position of the Record on the screen
@@ -59,9 +66,14 @@ class RecordOnScreen(Record):
 
     def __init__(self, y: int=0, x: int=0, win=None, parent=None):
         super().__init__()
+        # x and y represent coordinates of window containing text!
         self._y = y
         self._x = x
         self._win = win
+        # holds the list of coordinates on the path
+        # used to delete routes after deleting objects
+        # those coordinates are writen on main window
+        self._path = []
 
     @property
     def y(self):
@@ -87,9 +99,10 @@ class RecordOnScreen(Record):
     def win(self, win):
         self._win = win
 
-    def highlight_selected(self):
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-        self.win.attron(curses.color_pair(1))
-        self.win.addstr(self.y, self.x, self.data)
-        self.win.attroff(curses.color_pair(1))
-        self.win.refresh()
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, path):
+        self._path = path
