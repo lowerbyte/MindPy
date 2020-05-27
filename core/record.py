@@ -64,7 +64,7 @@ class RecordOnScreen(Record):
     """Class representing position of the Record on the screen
     """
 
-    def __init__(self, y: int=0, x: int=0, win=None, parent=None):
+    def __init__(self, y: int=0, x: int=0, parent=None):
         super().__init__()
         # x and y represent coordinates of window containing text!
         self._y = y
@@ -89,14 +89,6 @@ class RecordOnScreen(Record):
     @x.setter
     def x(self, x: int):
         self._x = x
-
-    @property
-    def win(self):
-        return self._win
-
-    @win.setter
-    def win(self, win):
-        self._win = win
 
     @property
     def path(self):

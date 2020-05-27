@@ -31,7 +31,7 @@ def main(stdscr):
                 y = ty//2-1
                 x = tx//2-1 - len(st[2:])//2 -1
                 logging.warning('s')
-                root = Root(y, x, win)
+                root = Root(y, x)
                 root.data = st[2:]
                 root.accept(v)
                 hl = v.highlight(root)

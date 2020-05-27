@@ -13,8 +13,8 @@ class Root(Singleton, RecordOnScreen):
     """ Class representing mind Root.
     As there can be only one Root, Singleton pattern is used.
     """
-    def __init__(self, y: int, x: int, win):
-        super(Root, self).__init__(y, x, win)
+    def __init__(self, y: int, x: int):
+        super(Root, self).__init__(y, x)
 
     def print(self):
         v = Visitor()
