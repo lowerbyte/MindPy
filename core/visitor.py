@@ -13,8 +13,8 @@ class Visitor:
         self.vwin = win
 
     def visit(self, rec: RecordOnScreen):     
-        self.vwin.addstr(rec.y, rec.x, rec.data)
-        self.vwin.refresh()
+        self.vwin.pad.addstr(rec.y, rec.x, rec.data)
+        self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
         
         if not rec.children:
             return
@@ -22,18 +22,18 @@ class Visitor:
         for idx, row in enumerate(rec.children):
             row.parent = rec
             core.path.Path.print_path(rec, row, self.vwin)
-
-                  
+  
         for child in rec.children:
             child.accept(self)
+
 
     def delete(self, rec: RecordOnScreen):            
         if rec.parent:
             for cor in rec.path:
-                self.vwin.delch(*cor)
-                self.vwin.refresh()
+                self.vwin.pad.delch(*cor)
+                self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
             rec.parent.remove_child(rec)
-            self.vwin.erase()
+            self.vwin.pad.erase()
         else:
             pass
 
@@ -45,14 +45,15 @@ class Visitor:
         if rec.children:
             for child in rec.children:
                 for cor in child.path:
-                    self.vwin.delch(*cor)
-                    self.vwin.refresh()
+                    self.vwin.pad.delch(*cor)
+                    self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
 
-            self.vwin.clear() 
+            self.vwin.pad.clear() 
             rec.data = data
         else:
             pass
         
+
     def highlight(self, rec: RecordOnScreen, key_code: int=None):
         if key_code == curses.KEY_RIGHT:
             if rec.children:
@@ -77,9 +78,9 @@ class Visitor:
         # initialize color pair
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
         # turn color pair on
-        self.vwin.attron(curses.color_pair(1))
-        self.vwin.addstr(rec.y, rec.x, rec.data)
+        self.vwin.pad.attron(curses.color_pair(1))
+        self.vwin.pad.addstr(rec.y, rec.x, rec.data)
         # turn color off
-        self.vwin.attroff(curses.color_pair(1))
-        self.vwin.refresh()
+        self.vwin.pad.attroff(curses.color_pair(1))
+        self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
         return rec
