@@ -89,6 +89,7 @@ def main(stdscr):
                 b.clear()
                 b.refresh()
                 hl.delete(v)
+                root.accept(v)
                 hl = v.highlight(root)
             elif st[0] == 'e':
                 data = st[2:]

@@ -69,7 +69,6 @@ class RecordOnScreen(Record):
         # x and y represent coordinates of window containing text!
         self._y = y
         self._x = x
-        self._win = win
         # holds the list of coordinates on the path
         # used to delete routes after deleting objects
         # those coordinates are writen on main window

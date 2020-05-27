@@ -89,7 +89,7 @@ class Path:
                 for y in range(rec1.y-1, rec2.y, -1):
                     win.addch(y, rec1.x, Path._vertical)
                     rec2.path.append((y, rec1.x))
-                for x in range(rec2.x+len(rec2.data), rec1.x+1):
+                for x in range(rec2.x+len(rec2.data), rec1.x):
                     win.addch(rec2.y, x, Path._horizontal)
                     rec2.path.append((rec2.y, x))
                 win.refresh()

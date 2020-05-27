@@ -7,16 +7,14 @@ import core.path
 class Visitor:
     """ Visitor class - mainly used to print the Root
     """
+
     def __init__(self, win):
         # screen instance
         self.vwin = win
 
-    def visit(self, rec: RecordOnScreen):   
-        tmp_win = self.vwin.subwin(1, len(rec.data)+1, rec.y, rec.x)  
-        rec.win = tmp_win
-        rec.win.clear()   
-        rec.win.addstr(0, 0, rec.data)
-        rec.win.refresh()
+    def visit(self, rec: RecordOnScreen):     
+        self.vwin.addstr(rec.y, rec.x, rec.data)
+        self.vwin.refresh()
         
         if not rec.children:
             return
@@ -35,8 +33,7 @@ class Visitor:
                 self.vwin.delch(*cor)
                 self.vwin.refresh()
             rec.parent.remove_child(rec)
-            rec.win.erase()
-            rec.win.refresh()
+            self.vwin.erase()
         else:
             pass
 
@@ -51,12 +48,11 @@ class Visitor:
                     self.vwin.delch(*cor)
                     self.vwin.refresh()
 
-            rec.win.clear() 
+            self.vwin.clear() 
             rec.data = data
         else:
             pass
         
-    @classmethod
     def highlight(self, rec: RecordOnScreen, key_code: int=None):
         if key_code == curses.KEY_RIGHT:
             if rec.children:
@@ -81,9 +77,9 @@ class Visitor:
         # initialize color pair
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
         # turn color pair on
-        rec.win.attron(curses.color_pair(1))
-        rec.win.addstr(0, 0, rec.data)
+        self.vwin.attron(curses.color_pair(1))
+        self.vwin.addstr(rec.y, rec.x, rec.data)
         # turn color off
-        rec.win.attroff(curses.color_pair(1))
-        rec.win.refresh()
+        self.vwin.attroff(curses.color_pair(1))
+        self.vwin.refresh()
         return rec
