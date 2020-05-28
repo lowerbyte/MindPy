@@ -16,6 +16,3 @@ class Root(Singleton, RecordOnScreen):
     def __init__(self, y: int, x: int):
         super(Root, self).__init__(y, x)
 
-    def print(self):
-        v = Visitor()
-        self.accept(v)

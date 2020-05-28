@@ -1,5 +1,6 @@
 from typing import List
 import curses
+import json
 
 class Record:
     """ Class representing basic unit in MindPy Root.
@@ -97,3 +98,7 @@ class RecordOnScreen(Record):
     @path.setter
     def path(self, path):
         self._path = path
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)

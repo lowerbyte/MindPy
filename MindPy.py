@@ -8,58 +8,56 @@ import argparse
 from core.path import Path
 from core.canvas import Canvas
 
+
 def main(stdscr):
-    # Clear screen
-    root = None
     # highlighted element
     hl = None
+    root = None
     win = Canvas(1000,1000)
     v = core.visitor.Visitor(win)
-    stdscr.clear()
-    stdscr.refresh()
+
+    # Main program loop
     while True:
+        # window reponsible for interaction with human
+        hmi = curses.newwin(1,(curses.COLS-1), curses.LINES-1, 0)
         ch = stdscr.getch()
         if ch == ord(':'):
-            b = curses.newwin(1,(curses.COLS-1), curses.LINES-2, 0)
-            b.erase()
-            #b.move(curses.LINES-2, 0)
-            b.addstr(chr(ch))
+            hmi.erase()
+            hmi.addstr(chr(ch))
             curses.echo()
-            logging.info(ch)
-            st = b.getstr().decode('utf-8')
-            if st[0] == 's':
-                y = 1000//2-1
-                x = 1000//2-1 - len(st[2:])//2 -1
-                logging.warning('s')
+
+            user_input = hmi.getstr().decode('utf-8').split(' ', maxsplit=1)
+            if user_input[0] == 's':
+                # calculate position of root element
+                pad_size = win.size
+                y = pad_size[0]//2-1
+                x = pad_size[1]//2-1 - len(user_input[1])//2 -1
+
+                # create root element
                 root = Root(y, x)
-                root.data = st[2:]
-                win.y = 500-curses.LINES//2
-                win.x = 500-curses.COLS//2
+                root.data = user_input[1]
+
+                # use Visitor design pattern to print out tree
                 root.accept(v)
                 hl = v.highlight(root)
-                #root.highlight_selected()
+
                 curses.noecho()
-                b.clear()
-                b.refresh()
+                hmi.clear()
+                hmi.refresh()
+
+                # move cursor to new position
                 win.pad.move(y,x)
-                win.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
-                #win.refresh()   
-                #a.getkey()
-                # Let the user edit until Ctrl-G is struck.
-                #box.edit()
+                win.refresh()
 
-                # Get resulting contents
-                #message = box.gather()
-
-                #print(message)
-            elif st[0] == 'a':
-                b.clear()
-                b.refresh()
-                logging.warning('a')
+            elif user_input[0] == 'a' and root:
+                # set cursos position
                 y, x = win.pad.getyx()
-                logging.warning('{0}, {1}'.format(y,x))
                 win.pad.move(y, x)
-                win.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
+                win.refresh()     
+                
+                # print instruction
+                hmi.addstr('Set cursor position using arrow keys. Hit p to put text.')
+                hmi.refresh()
                 cpos = stdscr.getch()
                 while(cpos != ord('p')):
                     if cpos == curses.KEY_RIGHT:
@@ -74,65 +72,110 @@ def main(stdscr):
                     elif cpos == curses.KEY_LEFT:
                         win.pad.move(y, x-1) 
                         x -= 1
-                    win.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
+                    win.refresh()                    
                     curses.noecho()
                     cpos = stdscr.getch()
+
+                # create new RecordOnScreen
                 c = RecordOnScreen(y,x)
-                c.data = st[2:]
+                c.data = user_input[1]
+
                 # add child to highlihted element
                 hl.add_child(c)
-                logging.warning('{0}'.format(hl.children))
                 root.accept(v)
-                #win.refresh()
+
+                hmi.erase()
+                hmi.refresh()
+                # highlight new child
                 hl = v.highlight(c, ch)
                 win.pad.move(y, x)
-                win.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
-            elif st[0] == 'd':
-                b.clear()
-                b.refresh()
+                win.refresh()
+
+            elif user_input[0] == 'd' and root:
+                hmi.clear()
+                hmi.refresh()
                 hl.delete(v)
                 root.accept(v)
                 hl = v.highlight(root)
-            elif st[0] == 'e':
-                data = st[2:]
-                b.clear()
-                b.refresh()
+                curses.noecho()
+
+            elif user_input[0] == 'e' and root:
+                data = user_input[1]
+                hmi.clear()
+                hmi.refresh()
                 hl.edit(v, data)
                 root.accept(v)
+                curses.noecho()
 
+            elif user_input[0] == 'w':
+                logging.warning('W')
+                logging.warning(root.toJSON())
+
+            elif user_input[0] == 'h':
+                hmi.erase()
+                hmi.addstr("Hit q to quit help.")
+                hmi.refresh()
+                win.print_help()
+                curses.noecho()
+                q = stdscr.getch()
+                while(q != ord('q')):
+                    q = stdscr.getch()
+                win.pad.clear()
+                win.refresh()
+                hmi.erase()
+                hmi.refresh()
+                if root:
+                    root.accept(v)
+
+            elif user_input[0] == 'q':
+                return 0
+
+            else:
+                curses.noecho()
+                hmi.clear()
+                hmi.addstr("You have to create root first (:s)!")
+                hmi.refresh()
+                
         elif ch == curses.KEY_RIGHT:
-            logging.warning('KEY RIGHT')
             root.accept(v)
             hl = v.highlight(hl, ch)
+
         elif ch == curses.KEY_UP:
-            logging.warning('KEY UP')
             root.accept(v)
             hl = v.highlight(hl, ch)
+
         elif ch == curses.KEY_DOWN:
-            logging.warning('KEY DOWN')
-            root.accept(v)
-            hl = v.highlight(hl, ch)   
-        elif ch == curses.KEY_LEFT:
-            logging.warning('KEY LEFT')
             root.accept(v)
             hl = v.highlight(hl, ch)  
+
+        elif ch == curses.KEY_LEFT:
+            root.accept(v)
+            hl = v.highlight(hl, ch)  
+        
+        # keys responsible for moving the pad
         elif ch == ord('j'):
             win.y -= 1
-            root.accept(v)
+            if root:
+                root.accept(v)
+
         elif ch == ord('k'):
-            logging.warning('K')
             win.y += 1
-            root.accept(v)
+            if root:
+                root.accept(v)
+
         elif ch == ord('h'):
-            logging.warning('H')
             win.x -= 1
-            root.accept(v)  
+            if root:
+                root.accept(v)
+
         elif ch == ord('l'):
-            logging.warning('L')
             win.x += 1
-            root.accept(v)
-        #hl = v.highlight(hl)
-        #root.highlight_selected()
+            if root:
+                root.accept(v)
+
+        else:
+            hmi.addstr('Incorrect command. Type :h for list of possible commands.')
+            hmi.refresh()
 
 
 if __name__=='__main__':

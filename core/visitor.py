@@ -14,8 +14,7 @@ class Visitor:
 
     def visit(self, rec: RecordOnScreen):     
         self.vwin.pad.addstr(rec.y, rec.x, rec.data)
-        self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
-        
+        self.vwin.refresh()        
         if not rec.children:
             return
 
@@ -31,7 +30,7 @@ class Visitor:
         if rec.parent:
             for cor in rec.path:
                 self.vwin.pad.delch(*cor)
-                self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
+                self.vwin.refresh()            
             rec.parent.remove_child(rec)
             self.vwin.pad.erase()
         else:
@@ -41,18 +40,16 @@ class Visitor:
         for child in rec.children[:]:
             child.delete(self)
 
+
     def edit(self, rec: RecordOnScreen, data: str):            
         if rec.children:
             for child in rec.children:
                 for cor in child.path:
                     self.vwin.pad.delch(*cor)
-                    self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
+                    self.vwin.refresh()
+        self.vwin.pad.clear() 
+        rec.data = data
 
-            self.vwin.pad.clear() 
-            rec.data = data
-        else:
-            pass
-        
 
     def highlight(self, rec: RecordOnScreen, key_code: int=None):
         if key_code == curses.KEY_RIGHT:
@@ -82,5 +79,5 @@ class Visitor:
         self.vwin.pad.addstr(rec.y, rec.x, rec.data)
         # turn color off
         self.vwin.pad.attroff(curses.color_pair(1))
-        self.vwin.refresh(0, 0, (curses.LINES-1), curses.COLS-2)
+        self.vwin.refresh()        
         return rec
