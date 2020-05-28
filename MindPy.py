@@ -28,6 +28,8 @@ def main(stdscr):
 
             user_input = hmi.getstr().decode('utf-8').split(' ', maxsplit=1)
             if user_input[0] == 's':
+                if len(user_input) < 2 or user_input[-1]=='':
+                    continue
                 # calculate position of root element
                 pad_size = win.size
                 y = pad_size[0]//2-1
@@ -50,6 +52,8 @@ def main(stdscr):
                 win.refresh()
 
             elif user_input[0] == 'a' and root:
+                if len(user_input) < 2 or user_input[-1]=='':
+                    continue
                 # set cursos position
                 y, x = win.pad.getyx()
                 win.pad.move(y, x)
