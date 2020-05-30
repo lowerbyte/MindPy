@@ -208,8 +208,8 @@ def main(stdscr, f_name):
 if __name__=='__main__':
     logging.basicConfig(filename='mindpy.log')
     parser = argparse.ArgumentParser()
-    parser.add_argument('--draw')
-    parser.add_argument('--load')
+    parser.add_argument('--draw', help='draw [option] - select drawing option (diagonal)')
+    parser.add_argument('--load', help='load [file]   - load serialized json file')
     args = parser.parse_args()
     if args.draw == 'diagonal':
         Path._diagonal = True
