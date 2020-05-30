@@ -17,12 +17,14 @@ def main(stdscr, f_name):
     win = Canvas(1000,1000)
     win.pad.keypad(True)
     v = core.visitor.Visitor(win)
+    select = RecordOnScreen.select
 
     # if program was run with --load parameter
     if root:
         root = Root.deserialize(f_name)
         root.accept(v)
-        hl = v.highlight(root)
+        hl = select(root)
+        win.highlight(hl)
 
     # Main program loop
     while True:
@@ -49,7 +51,8 @@ def main(stdscr, f_name):
 
                 # use Visitor design pattern to print out tree
                 root.accept(v)
-                hl = v.highlight(root)
+                hl = select(root)
+                win.highlight(hl)
 
                 curses.noecho()
                 hmi.clear()
@@ -99,7 +102,8 @@ def main(stdscr, f_name):
                 hmi.erase()
                 hmi.refresh()
                 # highlight new child
-                hl = v.highlight(c, ch)
+                hl = select(c)
+                win.highlight(hl)
                 win.pad.move(y, x)
                 win.refresh()
 
@@ -109,7 +113,8 @@ def main(stdscr, f_name):
                 win.pad.clear()
                 hl.delete()
                 root.accept(v)
-                hl = v.highlight(root)
+                hl = select(root)
+                win.highlight(hl)
                 curses.noecho()
 
             elif user_input[0] == 'e' and root:
@@ -137,7 +142,8 @@ def main(stdscr, f_name):
                 hmi.refresh()
                 root = Root.deserialize(user_input[1])
                 root.accept(v)
-                hl = v.highlight(root)
+                hl = select(root)
+                win.highlight(hl)
                 curses.noecho()
 
             elif user_input[0] == 'h':
@@ -167,19 +173,23 @@ def main(stdscr, f_name):
                 
         elif ch == curses.KEY_RIGHT:
             root.accept(v)
-            hl = v.highlight(hl, ch)
+            hl = select(hl, ch)
+            win.highlight(hl)
 
         elif ch == curses.KEY_UP:
             root.accept(v)
-            hl = v.highlight(hl, ch)
+            hl = select(hl, ch)
+            win.highlight(hl)
 
         elif ch == curses.KEY_DOWN:
             root.accept(v)
-            hl = v.highlight(hl, ch)  
+            hl = select(hl, ch)
+            win.highlight(hl) 
 
         elif ch == curses.KEY_LEFT:
             root.accept(v)
-            hl = v.highlight(hl, ch)  
+            hl = select(hl, ch)
+            win.highlight(hl) 
         
         # keys responsible for moving the pad
         elif ch == ord('j'):

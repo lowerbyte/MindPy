@@ -95,6 +95,31 @@ class RecordOnScreen(Record):
     def x(self, x: int):
         self._x = x
 
+    @staticmethod
+    def select(rec: 'RecordOnScreen', key_code: int=None):
+        if key_code == curses.KEY_RIGHT:
+            if rec.children:
+                rec = rec.children[0]
+        elif key_code == curses.KEY_DOWN:
+            if rec.parent:
+                idx = rec.parent.children.index(rec)
+                if idx >= len(rec.parent.children)-1:
+                    pass
+                else:
+                    rec = rec.parent.children[idx+1]
+        elif key_code == curses.KEY_UP:
+            if rec.parent:
+                idx = rec.parent.children.index(rec)
+                if idx <= 0:
+                    pass
+                else:
+                    rec = rec.parent.children[idx-1]
+        if key_code == curses.KEY_LEFT:
+            if rec.parent:
+                rec = rec.parent
+                       
+        return rec
+
     def toJSON(self):
         json_dict = {
             'data':str(self.data),

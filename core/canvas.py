@@ -64,5 +64,13 @@ class Canvas:
         self.pad.refresh(self.y, self.x, 0, 0, curses.LINES-2, curses.COLS-1)
 
 
-
+    def highlight(self, rec: RecordOnScreen):
+        # initialize color pair
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        # turn color pair on
+        self.pad.attron(curses.color_pair(1))
+        self.pad.addstr(rec.y, rec.x, rec.data)
+        # turn color off
+        self.pad.attroff(curses.color_pair(1))
+        self.refresh() 
 
