@@ -55,6 +55,7 @@ class Canvas:
             '    - d (del) - delete highlighted element,',
             '    - w (write) - write to file,',
             '    - h (help) - print help',
+            '    - l (load) - load serilized mind map'
         ]
 
         self.pad.clear()
