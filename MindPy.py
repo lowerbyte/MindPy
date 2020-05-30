@@ -9,25 +9,33 @@ from core.path import Path
 from core.canvas import Canvas
 
 
-def main(stdscr):
+def main(stdscr, f_name):
     # highlighted element
     hl = None
-    root = None
+    root = f_name
+    
     win = Canvas(1000,1000)
+    win.pad.keypad(True)
     v = core.visitor.Visitor(win)
+
+    # if program was run with --load parameter
+    if root:
+        root = Root.deserialize(f_name)
+        root.accept(v)
+        hl = v.highlight(root)
 
     # Main program loop
     while True:
         # window reponsible for interaction with human
         hmi = curses.newwin(1,(curses.COLS-1), curses.LINES-1, 0)
-        ch = stdscr.getch()
+        ch = win.pad.getch()
         if ch == ord(':'):
             hmi.erase()
             hmi.addstr(chr(ch))
             curses.echo()
 
             user_input = hmi.getstr().decode('utf-8').split(' ', maxsplit=1)
-            if user_input[0] == 's':
+            if user_input[0] == 's' and not root:
                 if len(user_input) < 2 or user_input[-1]=='':
                     continue
                 # calculate position of root element
@@ -62,7 +70,7 @@ def main(stdscr):
                 # print instruction
                 hmi.addstr('Set cursor position using arrow keys. Hit p to put text.')
                 hmi.refresh()
-                cpos = stdscr.getch()
+                cpos = win.pad.getch()
                 while(cpos != ord('p')):
                     if cpos == curses.KEY_RIGHT:
                         win.pad.move(y, x+1)
@@ -78,7 +86,7 @@ def main(stdscr):
                         x -= 1
                     win.refresh()                    
                     curses.noecho()
-                    cpos = stdscr.getch()
+                    cpos = win.pad.getch()
 
                 # create new RecordOnScreen
                 c = RecordOnScreen(y,x)
@@ -111,9 +119,24 @@ def main(stdscr):
                 root.accept(v)
                 curses.noecho()
 
-            elif user_input[0] == 'w':
-                logging.warning('W')
-                logging.warning(root.toJSON())
+            elif user_input[0] == 'w' and root:
+                hmi.clear()
+                hmi.refresh()
+                if len(user_input) < 2 or user_input[-1]=='':
+                    root.serialize()
+                else:
+                    data = user_input[1]
+                    root.serialize(data)
+
+            elif user_input[0] == 'l' and not root:
+                if len(user_input) < 2 or user_input[-1]=='':
+                    continue
+                hmi.clear()
+                hmi.refresh()
+                root = Root.deserialize(user_input[1])
+                root.accept(v)
+                hl = v.highlight(root)
+                curses.noecho()
 
             elif user_input[0] == 'h':
                 hmi.erase()
@@ -121,9 +144,9 @@ def main(stdscr):
                 hmi.refresh()
                 win.print_help()
                 curses.noecho()
-                q = stdscr.getch()
+                q = win.pad.getch()
                 while(q != ord('q')):
-                    q = stdscr.getch()
+                    q = win.pad.getch()
                 win.pad.clear()
                 win.refresh()
                 hmi.erase()
@@ -186,7 +209,8 @@ if __name__=='__main__':
     logging.basicConfig(filename='mindpy.log')
     parser = argparse.ArgumentParser()
     parser.add_argument('--draw')
+    parser.add_argument('--load')
     args = parser.parse_args()
     if args.draw == 'diagonal':
         Path._diagonal = True
-    curses.wrapper(main)
+    curses.wrapper(main, args.load)
