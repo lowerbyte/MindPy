@@ -56,6 +56,7 @@ class Record:
         visitor.visit(self)
 
     def delete(self):
+        # method used to delete whole branches of the tree
         if self.parent:           
             self.parent.remove_child(self)
         else:
@@ -73,7 +74,7 @@ class RecordOnScreen(Record):
     """Class representing position of the Record on the screen
     """
 
-    def __init__(self, y: int=0, x: int=0, parent=None):
+    def __init__(self, y: int=0, x: int=0):
         super().__init__()
         # x and y represent coordinates of window containing text!
         self._y = y
