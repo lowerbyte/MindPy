@@ -12,43 +12,18 @@ class Visitor:
         # screen instance
         self.vwin = win
 
-    def visit(self, rec: RecordOnScreen):     
+    def visit(self, rec: RecordOnScreen): 
+        # reposnsible for drawing the tree
         self.vwin.pad.addstr(rec.y, rec.x, rec.data)
         self.vwin.refresh()        
         if not rec.children:
             return
 
         for idx, row in enumerate(rec.children):
-            row.parent = rec
             core.path.Path.print_path(rec, row, self.vwin)
   
         for child in rec.children:
             child.accept(self)
-
-
-    def delete(self, rec: RecordOnScreen):            
-        if rec.parent:
-            for cor in rec.path:
-                self.vwin.pad.delch(*cor)
-                self.vwin.refresh()            
-            rec.parent.remove_child(rec)
-            self.vwin.pad.erase()
-        else:
-            pass
-
-        # iterate trough copy of the list as we are removing items while iterating
-        for child in rec.children[:]:
-            child.delete(self)
-
-
-    def edit(self, rec: RecordOnScreen, data: str):            
-        if rec.children:
-            for child in rec.children:
-                for cor in child.path:
-                    self.vwin.pad.delch(*cor)
-                    self.vwin.refresh()
-        self.vwin.pad.clear() 
-        rec.data = data
 
 
     def highlight(self, rec: RecordOnScreen, key_code: int=None):

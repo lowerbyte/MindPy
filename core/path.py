@@ -32,7 +32,6 @@ class Path:
                 curx = rec2.x
                 for coordinate in range(rec2.y, rec1.y, -1):
                     win.pad.addch(coordinate, curx, Path._plus)
-                    rec2.path.append((coordinate, curx))
                     win.refresh()                    
                     curx -= invslope
             if rec2.y > rec1.y and rec2.x < rec1.x:
@@ -40,7 +39,6 @@ class Path:
                 curx = rec2.x
                 for coordinate in range(rec2.y, rec1.y, -1):
                     win.pad.addch(coordinate, curx, Path._plus)
-                    rec2.path.append((coordinate, curx))
                     win.refresh()                    
                     curx -= invslope
             elif rec2.y < rec1.y and rec2.x > rec1.x:
@@ -48,7 +46,6 @@ class Path:
                 curx = rec2.x
                 for coordinate in range(rec2.y, rec1.y):
                     win.pad.addch(coordinate, curx, Path._plus)
-                    rec2.path.append((coordinate, curx))
                     win.refresh()                   
                     curx += invslope
             elif rec2.y < rec1.y and rec2.x < rec1.x:
@@ -56,7 +53,6 @@ class Path:
                 curx = rec2.x
                 for coordinate in range(rec2.y, rec1.y):
                     win.pad.addch(coordinate, curx, Path._plus)
-                    rec2.path.append((coordinate, curx))
                     win.refresh()                    
                     curx += invslope
         
@@ -64,34 +60,26 @@ class Path:
             if rec2.y >= rec1.y and rec2.x > rec1.x:
                 for y in range(rec1.y, rec2.y):
                     win.pad.addch(y, rec1.x+len(rec1.data), Path._vertical)
-                    rec2.path.append((y, rec1.x+len(rec1.data)))
                 for x in range(rec1.x+len(rec1.data), rec2.x):
                     win.pad.addch(rec2.y, x, Path._horizontal)
-                    rec2.path.append((rec2.y, x))
                 win.refresh()            
             if rec2.y >= rec1.y and rec2.x <= rec1.x:
                 for y in range(rec1.y+1, rec2.y):
                     win.pad.addch(y, rec1.x, Path._vertical)
-                    rec2.path.append(((y, rec1.x)))
                 for x in range(rec2.x+len(rec2.data), rec1.x):
                     win.pad.addch(rec2.y, x, Path._horizontal)
-                    rec2.path.append((rec2.y, x))
                 win.refresh()            
             elif rec2.y < rec1.y and rec2.x >= rec1.x:
                 for y in range(rec1.y-1, rec2.y, -1):
                     win.pad.addch(y, rec1.x+len(rec1.data), Path._vertical)
-                    rec2.path.append((y, rec1.x+len(rec1.data)))
                 for x in range(rec1.x+len(rec1.data), rec2.x):
                     win.pad.addch(rec2.y, x, Path._horizontal)
-                    rec2.path.append((rec2.y, x))
                 win.refresh()            
             elif rec2.y < rec1.y and rec2.x <= rec1.x:
                 for y in range(rec1.y-1, rec2.y, -1):
                     win.pad.addch(y, rec1.x, Path._vertical)
-                    rec2.path.append((y, rec1.x))
                 for x in range(rec2.x+len(rec2.data), rec1.x):
                     win.pad.addch(rec2.y, x, Path._horizontal)
-                    rec2.path.append((rec2.y, x))
                 win.refresh()
         
         

@@ -106,7 +106,8 @@ def main(stdscr, f_name):
             elif user_input[0] == 'd' and root:
                 hmi.clear()
                 hmi.refresh()
-                hl.delete(v)
+                win.pad.clear()
+                hl.delete()
                 root.accept(v)
                 hl = v.highlight(root)
                 curses.noecho()
@@ -115,7 +116,8 @@ def main(stdscr, f_name):
                 data = user_input[1]
                 hmi.clear()
                 hmi.refresh()
-                hl.edit(v, data)
+                win.pad.clear()
+                hl.edit(data)
                 root.accept(v)
                 curses.noecho()
 

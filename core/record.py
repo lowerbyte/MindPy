@@ -42,8 +42,9 @@ class Record:
         """ Function responsible for adding new child to Record.
         Children can be added only one at a time.
         """
+        chld.parent = self
         self._children.append(chld)
-
+        
     def remove_child(self, chld: 'Record') -> List['Record']:
         """ Function responsible for removing new child to Record.
         Children can be removed only one at a time.
@@ -54,12 +55,19 @@ class Record:
     def accept(self, visitor):
         visitor.visit(self)
 
-    # Visitor method to delete Records and clear screen
-    def delete(self, visitor):
-        visitor.delete(self)
+    def delete(self):
+        if self.parent:           
+            self.parent.remove_child(self)
+        else:
+            pass
 
-    def edit(self, visitor, data: str):
-        visitor.edit(self, data)
+        # iterate trough copy of the list as we are removing items while iterating
+        for child in self.children[:]:
+            child.delete()
+
+    def edit(self, data: str):
+        self.data = data
+        
 
 class RecordOnScreen(Record):
     """Class representing position of the Record on the screen
@@ -70,10 +78,6 @@ class RecordOnScreen(Record):
         # x and y represent coordinates of window containing text!
         self._y = y
         self._x = x
-        # holds the list of coordinates on the path
-        # used to delete routes after deleting objects
-        # those coordinates are writen on main window
-        self._path = []
 
     @property
     def y(self):
@@ -90,14 +94,6 @@ class RecordOnScreen(Record):
     @x.setter
     def x(self, x: int):
         self._x = x
-
-    @property
-    def path(self):
-        return self._path
-
-    @path.setter
-    def path(self, path):
-        self._path = path
 
     def toJSON(self):
         json_dict = {
