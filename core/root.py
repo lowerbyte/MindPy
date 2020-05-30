@@ -23,7 +23,7 @@ class Root(Singleton, RecordOnScreen):
             f.write(json.dumps(self.toJSON()))
 
     @staticmethod
-    def deserialize(f_name):
+    def deserialize(f_name: str):
         with open(f_name, 'r') as f:
             f_tree = f.read()
 

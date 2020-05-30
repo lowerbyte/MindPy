@@ -5,7 +5,7 @@ import curses
 import core.path
 
 class Visitor:
-    """ Visitor class - mainly used to print the Root
+    """ Visitor class - used to print the tree
     """
 
     def __init__(self, win):
