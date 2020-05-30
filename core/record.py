@@ -100,5 +100,10 @@ class RecordOnScreen(Record):
         self._path = path
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
+        json_dict = {
+            'data':str(self.data),
+            'y': self.y,
+            'x': self.x,
+            'children': [child.toJSON() for child in self.children]
+        }
+        return json_dict
