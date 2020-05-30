@@ -27,16 +27,17 @@ class Root(Singleton, RecordOnScreen):
         with open(f_name, 'r') as f:
             f_tree = f.read()
 
-        def create_record(r_dict):
+        def create_record(r_dict, parent):
             rec = RecordOnScreen(r_dict['y'], r_dict['x'])
             rec.data = r_dict['data']
-            rec.children = [create_record(child) for child in r_dict['children']]
+            rec.parent = parent
+            rec.children = [create_record(child, rec) for child in r_dict['children']]
             return rec
 
         tree = json.loads(f_tree)
         root = Root(tree['y'], tree['x'])
         root.data = tree['data']
-        root.children = [create_record(child) for child in tree['children']]
+        root.children = [create_record(child, root) for child in tree['children']]
 
         return root
 
