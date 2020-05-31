@@ -48,9 +48,9 @@ def test_select(simple_tree, key):
     if key == curses.KEY_RIGHT:
         assert selected == test_rec.children[0]
     elif key == curses.KEY_DOWN:
-        assert selected == test_rec.parent.children[1]
-    elif key == curses.KEY_UP:
         assert selected == test_rec.parent.children[3]
+    elif key == curses.KEY_UP:
+        assert selected == test_rec.parent.children[1]
     elif key == curses.KEY_RIGHT:
         assert selected == test_rec.parent
 
