@@ -30,3 +30,5 @@ The second way is typing `:h` directly in `MindPy`.
 Feel free to cintribute to this piece of software.
 Before creating a PR, run:  
 `flake8` and `pytest`
+
+![pic](/blob/readme_pic.png)
