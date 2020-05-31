@@ -1,10 +1,10 @@
 from core.record import RecordOnScreen
-from core.visitor import Visitor
 import json
-import logging
+
 
 class Singleton(object):
     _instance = None
+
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls._instance, cls):
             cls._instance = object.__new__(cls)
@@ -18,7 +18,7 @@ class Root(Singleton, RecordOnScreen):
     def __init__(self, y: int, x: int):
         super(Root, self).__init__(y, x)
 
-    def serialize(self, f_name: str='mindpy.json'):
+    def serialize(self, f_name: str = 'mindpy.json'):
         with open(f_name, 'w') as f:
             f.write(json.dumps(self.toJSON()))
 
@@ -31,13 +31,16 @@ class Root(Singleton, RecordOnScreen):
             rec = RecordOnScreen(r_dict['y'], r_dict['x'])
             rec.data = r_dict['data']
             rec.parent = parent
-            rec.children = [create_record(child, rec) for child in r_dict['children']]
+            rec.children = [
+                create_record(child, rec) for child in r_dict['children']
+            ]
             return rec
 
         tree = json.loads(f_tree)
         root = Root(tree['y'], tree['x'])
         root.data = tree['data']
-        root.children = [create_record(child, root) for child in tree['children']]
+        root.children = [
+            create_record(child, root) for child in tree['children']
+        ]
 
         return root
-

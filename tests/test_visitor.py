@@ -1,15 +1,15 @@
 import pytest
-import core
 from core.root import Root
 from core.record import RecordOnScreen
 from core.visitor import Visitor
 from unittest.mock import Mock, patch
-from core.canvas import Canvas
+
 
 @pytest.fixture
 def simple_tree():
-    root = Root(0,0)
-    # list comprehenstion cannot be used with current approach of assignig parent
+    root = Root(0, 0)
+    # list comprehenstion cannot be used with
+    # current approach of assignig parent
     for i in range(5):
         root.add_child(RecordOnScreen())
     for child in root.children:
@@ -17,6 +17,7 @@ def simple_tree():
             child.add_child(RecordOnScreen())
 
     return root
+
 
 @patch('core.canvas.Canvas')
 @patch('core.path.Path')

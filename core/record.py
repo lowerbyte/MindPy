@@ -1,6 +1,6 @@
 from typing import List
 import curses
-import json
+
 
 class Record:
     """ Class representing basic unit in MindPy Root.
@@ -10,7 +10,6 @@ class Record:
         self._data: str = None
         self._children: List = []
         self._parent = None
-    
 
     @property
     def data(self):
@@ -42,7 +41,7 @@ class Record:
         """
         chld.parent = self
         self._children.append(chld)
-        
+
     def remove_child(self, chld: 'Record') -> List['Record']:
         """ Function responsible for removing new child to Record.
         Children can be removed only one at a time.
@@ -55,24 +54,25 @@ class Record:
 
     def delete(self):
         # method used to delete whole branches of the tree
-        if self.parent:           
+        if self.parent:
             self.parent.remove_child(self)
         else:
             pass
 
-        # iterate trough copy of the list as we are removing items while iterating
+        # iterate trough copy of the list as we are removing
+        # items while iterating
         for child in self.children[:]:
             child.delete()
 
     def edit(self, data: str):
         self.data = data
-        
+
 
 class RecordOnScreen(Record):
     """Class representing position of the Record on the screen
     """
 
-    def __init__(self, y: int=0, x: int=0):
+    def __init__(self, y: int = 0, x: int = 0):
         super().__init__()
         # x and y represent coordinates of window containing text!
         self._y = y
@@ -95,7 +95,7 @@ class RecordOnScreen(Record):
         self._x = x
 
     @staticmethod
-    def select(rec: 'RecordOnScreen', key_code: int=None):
+    def select(rec: 'RecordOnScreen', key_code: int = None):
         if key_code == curses.KEY_RIGHT:
             if rec.children:
                 rec = rec.children[0]
@@ -116,12 +116,12 @@ class RecordOnScreen(Record):
         if key_code == curses.KEY_LEFT:
             if rec.parent:
                 rec = rec.parent
-                       
+
         return rec
 
     def toJSON(self):
         json_dict = {
-            'data':str(self.data),
+            'data': str(self.data),
             'y': self.y,
             'x': self.x,
             'children': [child.toJSON() for child in self.children]

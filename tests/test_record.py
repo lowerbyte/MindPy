@@ -1,7 +1,7 @@
-from core.record import Record, RecordOnScreen
-from tests.test_visitor import simple_tree
+from core.record import RecordOnScreen
 import curses
 import pytest
+
 
 def test_add_child():
     parent = RecordOnScreen()
@@ -18,11 +18,13 @@ def test_remove_child():
 
     assert len(parent.children) == 0
 
+
 def test_delete(simple_tree):
     # delete child and it's children
     simple_tree.children[0].delete()
 
     assert len(simple_tree.children) == 4
+
 
 def test_edit():
     rec = RecordOnScreen()
@@ -31,6 +33,7 @@ def test_edit():
     rec.edit('New test data')
 
     assert rec.data == 'New test data'
+
 
 @pytest.mark.parametrize('key', [
     curses.KEY_RIGHT,
@@ -51,13 +54,12 @@ def test_select(simple_tree, key):
     elif key == curses.KEY_RIGHT:
         assert selected == test_rec.parent
 
+
 def test_to_json():
-    rec = RecordOnScreen(0,0)
+    rec = RecordOnScreen(0, 0)
     rec.children = [RecordOnScreen()]
 
     json_dir = rec.toJSON()
 
-    assert json_dir == {"data": "None", "y": 0, "x": 0, "children": 
+    assert json_dir == {"data": "None", "y": 0, "x": 0, "children":
                         [{"data": "None", "y": 0, "x": 0, "children": []}]}
-
-
