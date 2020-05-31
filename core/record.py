@@ -11,8 +11,6 @@ class Record:
         self._children: List = []
         self._parent = None
     
-    def __eq__(self, rec: 'Record'):
-        return self.data == rec.data and self.children == rec.children
 
     @property
     def data(self):
