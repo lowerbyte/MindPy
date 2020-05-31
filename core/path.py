@@ -66,7 +66,7 @@ class Path:
             if rec2.y >= rec1.y and rec2.x <= rec1.x:
                 for y in range(rec1.y+1, rec2.y):
                     win.pad.addch(y, rec1.x, Path._vertical)
-                for x in range(rec2.x+len(rec2.data), rec1.x+1):
+                for x in range(rec2.x+len(rec2.data), rec1.x):
                     win.pad.addch(rec2.y, x, Path._horizontal)
                 win.refresh()
             elif rec2.y < rec1.y and rec2.x >= rec1.x:
